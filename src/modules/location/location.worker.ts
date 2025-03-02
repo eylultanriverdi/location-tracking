@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { OnModuleInit } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
 import { LocationService } from './location.service';
+import { EventPattern, Payload } from '@nestjs/microservices';
+
 
 @Injectable()
 export class LocationWorker implements OnModuleInit {
@@ -11,10 +12,9 @@ export class LocationWorker implements OnModuleInit {
     console.log('LocationWorker listens for RabbitMQ messages...');
   }
 
-  @MessagePattern('location.received')
+  @EventPattern('location.received')
   async handleLocation(@Payload() locationData: { userId: string; latitude: number; longitude: number }) {
-    console.log(`Location taken: ${JSON.stringify(locationData)}`);
-
+    console.log('Message received:', locationData);
     await this.locationService.processLocation(locationData);
   }
 }

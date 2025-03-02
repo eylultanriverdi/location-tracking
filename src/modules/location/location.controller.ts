@@ -15,16 +15,15 @@ export class LocationController {
     @Body() locationData: { userId: string; latitude: number; longitude: number }
   ): Promise<any> {
     try {
+      console.log('Sending message to RabbitMQ:', locationData);
       this.client.emit('location.received', locationData);
-
       await this.locationService.processLocation(locationData);
-
-      return Responder.response(201, 'success', 'Konum alındı, işlenmek üzere kuyruğa eklendi', {
+      return Responder.response(201, 'success', 'Konum alındı.', {
         userId: locationData.userId,
       });
-
     } catch (error) {
-      return Responder.response(500, 'server error', 'Bir hata oluştu', { error: error.message });
+      return Responder.response(500, 'server error', 'Hata oluştu', { error: error.message });
     }
   }
+  
 }
